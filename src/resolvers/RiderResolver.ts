@@ -1,5 +1,5 @@
 import { Resolver, Query, Mutation, Arg } from 'type-graphql';
-import { RiderModel, Rider } from '../models/Rider';
+import { RiderModel, Rider } from '../entities/Rider';
 
 @Resolver(() => Rider)
 export class RiderResolver {
