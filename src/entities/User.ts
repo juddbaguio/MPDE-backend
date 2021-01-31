@@ -34,6 +34,10 @@ export class User {
   @Field()
   @prop({ required: true })
   contact: string;
+
+  @Field()
+  @prop({ required: true })
+  type: string;
 }
 
 export const UserModel = getModelForClass(User);

@@ -3,29 +3,35 @@
 # !!!   DO NOT MODIFY THIS FILE BY YOURSELF   !!!
 # -----------------------------------------------
 
+type DeleteReturnType {
+  deleted: Boolean!
+  error: String!
+  message: String!
+}
+
 type Mutation {
-  RegisterRider(birthDate: String!, contact: String!, email: String!, firstName: String!, lastName: String!, password: String!, plateNumber: String!, username: String!): Rider!
-  RegisterUser(birthDate: String!, contact: String!, email: String!, firstName: String!, lastName: String!, password: String!, username: String!): User!
+  DeleteUser(userId: ObjectId!): DeleteReturnType!
+  RegisterUser(birthDate: String!, contact: String!, email: String!, firstName: String!, lastName: String!, password: String!, type: String!, username: String!): RegisterReturnType!
+  UpdateUser(birthDate: String!, contact: String!, email: String!, firstName: String!, lastName: String!, type: String!, username: String!): UpdateReturnType!
 }
 
 """Mongo object id scalar type"""
 scalar ObjectId
 
 type Query {
-  RetrieveRiders: [Rider!]
   RetrieveUsers: [User!]
 }
 
-type Rider {
-  _id: ObjectId!
-  birthDate: String!
-  contact: String!
-  email: String!
-  firstName: String!
-  lastName: String!
-  password: String!
-  plateNumber: String!
-  username: String!
+type RegisterReturnType {
+  error: String
+  exists: Boolean
+  message: String
+  registered: Boolean
+}
+
+type UpdateReturnType {
+  error: String
+  message: String
 }
 
 type User {
@@ -36,5 +42,6 @@ type User {
   firstName: String!
   lastName: String!
   password: String
+  type: String!
   username: String!
 }

@@ -1,6 +1,5 @@
 import 'reflect-metadata';
-import dotenv from 'dotenv';
-dotenv.config();
+require('dotenv').config();
 
 import express, { Request, Response } from 'express';
 import path from 'path';
@@ -11,21 +10,20 @@ import { buildSchema } from 'type-graphql';
 import { ServerContext } from './serverContext';
 import { UserResolver } from './resolvers/UserResolver';
 import { ObjectIdScalar } from './ObjectIdScalar';
-import { RiderResolver } from './resolvers/RiderResolver';
+
+const DB_URI = process.env.MR_P_DB!;
 
 async function serverStart() {
   try {
     const app = express();
-    await mongoose.connect(
-      'mongodb+srv://admin:ogonpogotoVnosti28@mr-p-delivery-express.djzed.mongodb.net/Mr-P-Delivery-Express?retryWrites=true&w=majority',
-      {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      }
-    );
+    await mongoose.connect(DB_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      useFindAndModify: true,
+    });
     const server = new ApolloServer({
       schema: await buildSchema({
-        resolvers: [UserResolver, RiderResolver],
+        resolvers: [UserResolver],
         emitSchemaFile: path.resolve(__dirname, 'schema.gql'),
         scalarsMap: [{ type: ObjectId, scalar: ObjectIdScalar }],
       }),
