@@ -1,12 +1,16 @@
 import { ObjectId } from 'mongodb';
 import { Resolver, Query, Mutation, Arg } from 'type-graphql';
 import { UserModel, User } from '../entities/User';
+import jsonwebtoken from 'jsonwebtoken';
 import {
   DeleteReturnType,
+  LoginReturnType,
   RegisterReturnType,
   UpdateReturnType,
 } from './ReturnTypes';
 import bcrypt from 'bcrypt';
+
+const jwt = jsonwebtoken;
 
 @Resolver(() => User)
 export class UserResolver {
@@ -118,6 +122,44 @@ export class UserResolver {
     } catch (error) {
       return {
         message: `${error}`,
+      };
+    }
+  }
+
+  @Mutation(() => LoginReturnType)
+  async LoginUser(
+    @Arg('username') username: string,
+    @Arg('password') password: string
+  ): Promise<LoginReturnType> {
+    try {
+      const user = await UserModel.findOne({ username });
+      if (user) {
+        const validPassword = await bcrypt.compare(password, user.password);
+        const accessToken = jwt.sign(user.toObject(), 'user_access_token');
+        const refreshToken = jwt.sign(user.toObject(), 'user_refresh_token');
+
+        if (validPassword) {
+          // res.status(200).cookie('creds', accessToken, {
+          //   httpOnly: true,
+          // });
+
+          return {
+            accessToken,
+            refreshToken,
+          };
+        }
+
+        return {
+          error: 'Invalid Password',
+        };
+      }
+
+      return {
+        error: 'Account does not exist',
+      };
+    } catch (error) {
+      return {
+        error: `${error}`,
       };
     }
   }

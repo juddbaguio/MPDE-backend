@@ -9,8 +9,15 @@ type DeleteReturnType {
   message: String!
 }
 
+type LoginReturnType {
+  accessToken: String
+  error: String
+  refreshToken: String
+}
+
 type Mutation {
   DeleteUser(userId: ObjectId!): DeleteReturnType!
+  LoginUser(password: String!, username: String!): LoginReturnType!
   RegisterUser(birthDate: String!, contact: String!, email: String!, firstName: String!, lastName: String!, password: String!, type: String!, username: String!): RegisterReturnType!
   UpdateUser(birthDate: String!, contact: String!, email: String!, firstName: String!, lastName: String!, type: String!, username: String!): UpdateReturnType!
 }

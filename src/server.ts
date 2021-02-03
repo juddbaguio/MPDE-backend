@@ -10,12 +10,19 @@ import { buildSchema } from 'type-graphql';
 import { ServerContext } from './serverContext';
 import { UserResolver } from './resolvers/UserResolver';
 import { ObjectIdScalar } from './ObjectIdScalar';
+import cors from 'cors';
 
 const DB_URI = process.env.MR_P_DB!;
 
 async function serverStart() {
   try {
     const app = express();
+    app.use(
+      cors({
+        origin: true,
+        credentials: true,
+      })
+    );
     await mongoose.connect(DB_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
@@ -27,7 +34,9 @@ async function serverStart() {
         emitSchemaFile: path.resolve(__dirname, 'schema.gql'),
         scalarsMap: [{ type: ObjectId, scalar: ObjectIdScalar }],
       }),
-      context: (req: Request, res: Response): ServerContext => ({ req, res }),
+      context: (req: Request, res: Response): ServerContext => {
+        return { req, res };
+      },
     });
 
     server.applyMiddleware({
